@@ -54,6 +54,8 @@ public class MainController implements Initializable {
     private javafx.scene.paint.Color colorCho;
     private Buffer buffer;
     private int delta;
+    private WritableImage writablImage;
+    private PixelWriter writr;
 
 
     @FXML
@@ -253,12 +255,13 @@ public class MainController implements Initializable {
     public void setFiltrs(ActionEvent actionEvent) {
         clean();
         ListFilters.setVisible(true);
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
         ListFilters.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                WritableImage writableImage=filter.setFiltrs(ListFilters.getSelectionModel().getSelectedItem(),wImage);
-                graphicsContext.drawImage(writableImage,0,0, canvas.getWidth(), canvas.getHeight());
+                graphicsContext.drawImage(filter.setFiltrs(ListFilters.getSelectionModel().getSelectedItem(),
+                        new WritableImage(buffer.ReturnNotDelet().getPixelReader(),(int)buffer.ReturnNotDelet().getWidth(),(int)buffer.ReturnNotDelet().getHeight()))
+                        ,0,0, canvas.getWidth(), canvas.getHeight());
+
             }
         });
     }
@@ -270,38 +273,44 @@ public class MainController implements Initializable {
     }
 
     public void CustomRed(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Red",wImage,SliderRed.getValue());
+        WritableImage image=logica.customColor("Red",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight()),
+                SliderRed.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
     public void CustomBlue(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Blue",wImage,SliderBlue.getValue());
+        WritableImage image=logica.customColor("Blue",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
+                ,SliderBlue.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
     public void CustomGreen(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Green",wImage,SliderGreen.getValue());
+        WritableImage image=logica.customColor("Green",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
+                ,SliderGreen.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
     public void CustomLight(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Light",wImage,SliderLight.getValue());
+        WritableImage image=logica.customColor("Light",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
+                ,SliderLight.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
     public void CustomSaturation(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Sut",wImage,SliderSaturation.getValue());
+        WritableImage image=logica.customColor("Sut",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
+                ,SliderSaturation.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
     public void CustomWarm(MouseEvent mouseEvent) {
-        WritableImage wImage=logica.getWritableImageFromCanvas(canvas);
-        WritableImage image=logica.customColor("Warm",wImage,SliderWarm.getValue());
+        WritableImage image=logica.customColor("Warm",
+                new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
+                ,SliderWarm.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
     }
 
@@ -359,8 +368,10 @@ public class MainController implements Initializable {
                     countM++;
                 }
                 else {
+                    buffer.PutImeginn(new WritableImage(logica.getWritableImageFromCanvas(canvas).getPixelReader(), (int) canvas.getWidth(), (int) canvas.getHeight()));
                     graphicsContext.drawImage(MaskImage.getImage(), MaskImage.getLayoutX()-delta, MaskImage.getLayoutY(), MaskImage.getFitWidth(), MaskImage.getFitHeight());
                     AncPane.getChildren().remove(MaskImage);
+                    ReturneFoto.setVisible(true);
                     countM++;
                 }
             }
@@ -440,9 +451,9 @@ public class MainController implements Initializable {
                 colorCho=new Color(1,0.9,0.1,1);
             }
         });
-
-        WritableImage writableImage=logica.getWritableImageFromCanvas(canvas);
-        PixelWriter writer=writableImage.getPixelWriter();
+        writablImage=logica.getWritableImageFromCanvas(canvas);
+        buffer.PutImeginn(new WritableImage(logica.getWritableImageFromCanvas (canvas).getPixelReader(),(int) canvas.getWidth(), (int) canvas.getHeight()));
+        writr=writablImage.getPixelWriter();
         pn.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -451,8 +462,18 @@ public class MainController implements Initializable {
                             if (mouseEvent.getY() < MainClassApplication.heightScene - 56 &&
                                     mouseEvent.getX() < canvas.getWidth() + delta &&
                                     mouseEvent.getX() > delta) {
-                                logica.drow(writer, (int) mouseEvent.getX() - delta, (int) mouseEvent.getY(), (int) size.getValue(), colorCho);
-                                graphicsContext.drawImage(writableImage, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                logica.drow(writr, (int) mouseEvent.getX() - delta, (int) mouseEvent.getY(), (int) size.getValue(), colorCho);
+                                graphicsContext.drawImage(writablImage, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                ReturneFoto.setVisible(true);
+                                ReturneFoto.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent mouseEvent) {
+                                        writablImage=null;
+                                        writablImage=new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) canvas.getWidth(), (int) canvas.getHeight());
+                                        buffer.PutImeginn(new WritableImage(writablImage.getPixelReader(),(int) canvas.getWidth(), (int) canvas.getHeight()));
+                                        writr=writablImage.getPixelWriter();
+                                    }
+                                });
 
                             }
 
