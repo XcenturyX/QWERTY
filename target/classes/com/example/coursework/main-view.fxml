@@ -18,18 +18,25 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
-<VBox id="MainLayoute" fx:id="VBoxMain" alignment="BASELINE_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.coursework.MainController">
+<VBox id="MainLayoute"  alignment="BASELINE_LEFT" prefHeight="494" prefWidth="1024" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.coursework.MainController">
    <children>
-      <HBox fx:id="hBoxViewImage">
+      <HBox  prefWidth="1024" prefHeight="439" >
          <children>
             <AnchorPane fx:id="PaneTools" prefHeight="0" prefWidth="0">
                <children>
                    <ListView fx:id="ListFilters" prefHeight="165.0" prefWidth="150.0" visible="false" />
                    <ListView fx:id="ListMask" prefHeight="180.0" prefWidth="150.0" visible="false" />
-                   <ImageView fx:id="iPlus" pickOnBounds="true" preserveRatio="true" visible="false" />
-                   <ImageView fx:id="iMinus" pickOnBounds="true" preserveRatio="true" visible="false" />
-                   <Slider fx:id="size" max="15.0" min="5.0" visible="false" />
-
+                   <ImageView fx:id="iPlus" fitWidth="30" fitHeight="30" layoutX="50" layoutY="200" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iMinus" fitWidth="30" fitHeight="30" layoutX="10" layoutY="200" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <Slider fx:id="size" layoutY="20" max="15.0" min="5.0" visible="false" />
+                   <ImageView fx:id="iBlack" fitWidth="18" fitHeight="18" layoutX="0" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iBlue" fitWidth="18" fitHeight="18" layoutX="18" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iGreen" fitWidth="18" fitHeight="18" layoutX="36" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iOrange" fitWidth="18" fitHeight="18" layoutX="54" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iRed" fitWidth="18" fitHeight="18" layoutX="72" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iWhite" fitWidth="18" fitHeight="18" layoutX="90" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iPur" fitWidth="18" fitHeight="18" layoutX="108" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
+                   <ImageView fx:id="iYellow" fitWidth="18" fitHeight="18" layoutX="126" layoutY="246" pickOnBounds="true" preserveRatio="true" visible="false" />
 
                    <ToolBar id="ConfigBar" fx:id="FotoToolBar" orientation="VERTICAL" visible="false">
                        <items>
@@ -50,14 +57,14 @@
 
                </children>
             </AnchorPane>
-             <AnchorPane fx:id="AncPane">
+             <AnchorPane fx:id="AncPane" layoutY="0" layoutX="150" prefHeight="439" prefWidth="874">
                <children>
 
                </children>
             </AnchorPane>
 
          </children></HBox>
-      <ToolBar id="FunToolBar" fx:id="MainFunToolBar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="600.0">
+      <ToolBar id="FunToolBar"  nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="600.0">
         <items>
           <Button mnemonicParsing="false" onAction="#LoudFoto" styleClass="FunBut" text="Загрузить">
                <cursor>
@@ -78,7 +85,6 @@
             <MenuButton fx:id="DrowBut" mnemonicParsing="false" popupSide="TOP" styleClass="FunBut" text="М/Т/Р">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#setMaskOnFoto" text="Маски" />
-                <MenuItem mnemonicParsing="false"  text="Текст" />
                   <MenuItem mnemonicParsing="false" onAction="#DrowAction" text="Рисование" />
               </items>
                <cursor>
@@ -90,7 +96,12 @@
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
             <Pane prefHeight="45.0" prefWidth="350.0" />
-            <Button fx:id="ReturneFoto"  mnemonicParsing="false"  styleClass="FunBut" text="Отмена" />
+            <Button fx:id="ReturneFoto"  mnemonicParsing="false" onAction="#returnLastFoto" styleClass="FunBut" text="Отмена" >
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+
         </items>
       </ToolBar>
    </children>

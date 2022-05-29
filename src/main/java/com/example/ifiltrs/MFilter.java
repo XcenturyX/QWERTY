@@ -9,21 +9,22 @@ import javafx.scene.paint.Color;
 import java.util.HashMap;
 
 public class MFilter {
+    public final String[] arrFiltrs={"Запад","Пальма","Луг","Румянец","Кинолента","Черно-Белый","Негатив"};
     private HashMap<String,Double[]> fil;
     public MFilter(){//Желательно бы подгружать список и удалять динамически
         fil=new HashMap<>();
-        fil.put("Запад",new Double[]{new Double(1),new Double(1),new Double(1.1)});
-        fil.put("Пальма",new Double[]{new Double(1.1),new Double(1),new Double(1)});
-        fil.put("Луг",new Double[]{new Double(1),new Double(1.1),new Double(1)});
-        fil.put("Румянец",new Double[]{new Double(1.25),new Double(1),new Double(1.1)});
-        fil.put("Кинолента",new Double[]{new Double(0.95),new Double(0.95),new Double(1.25)});
-        fil.put("Черно-Белый",new Double[]{new Double(0),new Double(0),new Double(0)});
-        fil.put("Негатив",new Double[]{new Double(0),new Double(0),new Double(0)});
+        fil.put(arrFiltrs[0],new Double[]{new Double(1),new Double(1),new Double(1.1)});
+        fil.put(arrFiltrs[1],new Double[]{new Double(1.1),new Double(1),new Double(1)});
+        fil.put(arrFiltrs[2],new Double[]{new Double(1),new Double(1.1),new Double(1)});
+        fil.put(arrFiltrs[3],new Double[]{new Double(1.25),new Double(1),new Double(1.1)});
+        fil.put(arrFiltrs[4],new Double[]{new Double(0.95),new Double(0.95),new Double(1.25)});
+        fil.put(arrFiltrs[5],new Double[]{new Double(0),new Double(0),new Double(0)});
+        fil.put(arrFiltrs[6],new Double[]{new Double(0),new Double(0),new Double(0)});
     }
     public WritableImage setFiltrs(String s, WritableImage image){
-        if(s!="Негатив"&&s!="Черно-Белый")
+        if(!s.equals("Негатив")&&!s.equals("Черно-Белый"))
             return filtrsMetod(image,fil.get(s));
-        if(s=="Черно-Белый"){
+        if(s.equals("Черно-Белый")){
             int width = (int) (image.getWidth());
             int height = (int) (image.getHeight());
             PixelWriter writer = image.getPixelWriter();
@@ -41,7 +42,7 @@ public class MFilter {
             }
             return image;
         }
-        if(s=="Негатив"){
+        if(s.equals("Негатив")){
 
             int width = (int) (image.getWidth());
             int height = (int) (image.getHeight());

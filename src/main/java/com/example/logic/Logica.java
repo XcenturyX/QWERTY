@@ -102,4 +102,18 @@ public class Logica {
             }
         }
     }
+   /* public WritableImage skaleFoto(WritableImage image,int deltaX,int deltaY,int deltaW,int deltaH){
+        WritableImage i=image;
+        int wight=(int)image.getWidth();
+        int hight=(int)image.getHeight();
+        PixelWriter writer= i.getPixelWriter();
+        for(int y=0;y<hight;y++){
+            for(int x=0;x<wight;x++){
+                if(x<deltaX&&x>deltaX+deltaW&&y<deltaY&&y>deltaY+deltaH) {
+                    writer.setColor(x, y, new Color(0, 0, 0, 0));
+                }
+            }
+        }
+        return i;
+    }*/
 }

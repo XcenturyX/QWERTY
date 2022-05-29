@@ -10,6 +10,7 @@ module com.example.coursework {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires java.desktop;
+    requires javafx.swing;
 
     opens com.example.coursework to javafx.fxml;
     exports com.example.coursework;

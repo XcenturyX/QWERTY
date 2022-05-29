@@ -12,14 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class MainClassApplication extends Application {
-    static double widthScene;
-    static double heightScene;
+    final static double widthScene = 1024;
+    final static double heightScene = 494;
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainClassApplication.class.getResource("main-view.fxml"));
-        Rectangle2D rectangle2D= Screen.getPrimary().getBounds();
-        widthScene=rectangle2D.getWidth()/1.5;
-        heightScene=rectangle2D.getHeight()/1.75;
         Scene scene = new Scene(fxmlLoader.load(), widthScene, heightScene );
         scene.getStylesheets().add(getClass().getResource("MyStyle.css").toExternalForm());
         stage.setTitle("Фоторедактор");

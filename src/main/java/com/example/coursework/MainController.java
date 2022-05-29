@@ -1,6 +1,7 @@
 package com.example.coursework;
 
 
+import com.example.MMask.Mask;
 import com.example.ibuff.Buffer;
 import com.example.ifiltrs.MFilter;
 import com.example.logic.Logica;
@@ -8,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 
 import javafx.event.EventHandler;
@@ -22,24 +24,20 @@ import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-//import javafx.embed.swing.SwingFXUtils;
+
 
 
 public class MainController implements Initializable {
@@ -49,27 +47,17 @@ public class MainController implements Initializable {
     private GraphicsContext graphicsContext;
     private Logica logica;
     private MFilter filter;
-   // private Mask imask;
+    private Mask imask;
     private ImageView MaskImage;
     private int countB;
     private int countM;
-    private Image[] mask;
-    private ImageView iBlack,iBlue,iGreen,iOrange,iRed,iWhite,iPur,iYellow;
     private javafx.scene.paint.Color colorCho;
     private Buffer buffer;
-
-
-
+    private int delta;
 
 
     @FXML
-    private VBox VBoxMain;
-    @FXML
-    private HBox hBoxViewImage;
-    @FXML
-    private ToolBar MainFunToolBar;
-    @FXML
-    private AnchorPane AncPane,PaneTools;
+    private AnchorPane AncPane;
     @FXML
     private ListView<String> ListFilters,ListMask;
     @FXML
@@ -77,14 +65,11 @@ public class MainController implements Initializable {
     @FXML
     private ToolBar FotoToolBar;
     @FXML
-    private ImageView iPlus, iMinus;
+    private ImageView iPlus, iMinus,iBlack,iBlue,iGreen,iOrange,iRed,iWhite,iPur,iYellow;
     @FXML
     private Button FilterBut,CorBut,ScaleBut,SafeBut,ReturneFoto;
     @FXML
     private MenuButton DrowBut;
-
-
-
 
 
 
@@ -96,42 +81,30 @@ public class MainController implements Initializable {
         logica=new Logica();
         filter=new MFilter();
         buffer=new Buffer();
-        //imask=new Mask();
+        imask=new Mask();
 
-        VBoxMain.setPrefHeight(MainClassApplication.heightScene);
-        VBoxMain.setPrefWidth(MainClassApplication.widthScene);
-
-
-        hBoxViewImage.setPrefWidth(MainClassApplication.widthScene);
-        hBoxViewImage.setPrefHeight(MainClassApplication.heightScene-MainFunToolBar.getPrefHeight()-10);
-
-        AncPane.setPrefHeight(hBoxViewImage.getPrefHeight());
-        AncPane.setPrefWidth(hBoxViewImage.getPrefWidth()-150);
-        AncPane.setLayoutX(150);
-        AncPane.setLayoutY(0);
-
-        ListFilters.getItems().add("Запад");
-        ListFilters.getItems().add("Пальма");
-        ListFilters.getItems().add("Луг");
-        ListFilters.getItems().add("Румянец");
-        ListFilters.getItems().add("Кинолента");
-        ListFilters.getItems().add("Черно-Белый");
-        ListFilters.getItems().add("Негатив");
+        ListFilters.getItems().addAll(filter.arrFiltrs);
 
         InputStream Stream=getClass().getResourceAsStream("useFoto/MTool/minus.png");
         iMinus.setImage(new Image(Stream));
         Stream=getClass().getResourceAsStream("useFoto/MTool/plus.png");
         iPlus.setImage(new Image(Stream));
-
-        mask=new Image[4];
-        Stream=getClass().getResourceAsStream("useFoto/MMask/Fan.png");
-        mask[0]=new Image(Stream);
-        Stream=getClass().getResourceAsStream("useFoto/MMask/Net.png");
-        mask[1]=new Image(Stream);
-        Stream=getClass().getResourceAsStream("useFoto/MMask/Qw.png");
-        mask[2]=new Image(Stream);
-        Stream=getClass().getResourceAsStream("useFoto/MMask/Xexe.png");
-        mask[3]=new Image(Stream);
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Blac.png");
+        iBlack.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Blue.png");
+        iBlue.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Green.png");
+        iGreen.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Orange.png");
+        iOrange.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Pur.png");
+        iPur.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Red.png");
+        iRed.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/White.png");
+        iWhite.setImage(new Image(Stream));
+        Stream=getClass().getResourceAsStream("useFoto/MColors/Yellow.png");
+        iYellow.setImage(new Image(Stream));
 
         ObservableList<String> items = FXCollections.observableArrayList (
                 "Веселый", "Нетральный", "????", "Хехехе)))");
@@ -149,94 +122,19 @@ public class MainController implements Initializable {
                     imageView.setFitWidth(30);
                     imageView.setFitHeight(30);
                     if(name.equals("Веселый"))
-                        imageView.setImage(mask[0]);
+                        imageView.setImage(imask.getMask(0));
                     else if(name.equals("Нетральный"))
-                        imageView.setImage(mask[1]);
+                        imageView.setImage(imask.getMask(1));
                     else if(name.equals("????"))
-                        imageView.setImage(mask[2]);
+                        imageView.setImage(imask.getMask(2));
                     else if(name.equals("Хехехе)))"))
-                        imageView.setImage(mask[3]);
+                        imageView.setImage(imask.getMask(3));
                     setText(name);
                     setGraphic(imageView);
                 }
             }
         });
 
-        iMinus.setFitWidth(30);
-        iMinus.setFitHeight(30);
-        iMinus.setLayoutY(200);
-        iMinus.setLayoutX(10);
-        iPlus.setFitWidth(30);
-        iPlus.setFitHeight(30);
-        iPlus.setLayoutY(200);
-        iPlus.setLayoutX(50);
-
-
-        iBlack=new ImageView();
-        iBlue=new ImageView();
-        iGreen=new ImageView();
-        iOrange=new ImageView();
-        iRed=new ImageView();
-        iWhite=new ImageView();
-        iPur=new ImageView();
-        iYellow=new ImageView();
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Blac.png");
-        iBlack.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Blue.png");
-        iBlue.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Green.png");
-        iGreen.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Orange.png");
-        iOrange.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Pur.png");
-        iPur.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Red.png");
-        iRed.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/White.png");
-        iWhite.setImage(new Image(Stream));
-        Stream=getClass().getResourceAsStream("useFoto/MColors/Yellow.png");
-        iYellow.setImage(new Image(Stream));
-        iBlack.setFitWidth(18);
-        iBlack.setFitHeight(18);
-        iBlack.setX(0);
-        iBlack.setY((int)(MainClassApplication.heightScene/2));
-        iBlack.setVisible(false);
-        iWhite.setFitWidth(18);
-        iWhite.setFitHeight(18);
-        iWhite.setX(18);
-        iWhite.setY((int)(MainClassApplication.heightScene/2));
-        iWhite.setVisible(false);
-        iRed.setFitWidth(18);
-        iRed.setFitHeight(18);
-        iRed.setX(36);
-        iRed.setY((int)(MainClassApplication.heightScene/2));
-        iRed.setVisible(false);
-        iOrange.setFitWidth(18);
-        iOrange.setFitHeight(18);
-        iOrange.setX(54);
-        iOrange.setY((int)(MainClassApplication.heightScene/2));
-        iOrange.setVisible(false);
-        iYellow.setFitWidth(18);
-        iYellow.setFitHeight(18);
-        iYellow.setX(72);
-        iYellow.setY((int)(MainClassApplication.heightScene/2));
-        iYellow.setVisible(false);
-        iGreen.setFitWidth(18);
-        iGreen.setFitHeight(18);
-        iGreen.setX(90);
-        iGreen.setY((int)(MainClassApplication.heightScene/2));
-        iGreen.setVisible(false);
-        iBlue.setFitWidth(18);
-        iBlue.setFitHeight(18);
-        iBlue.setX(108);
-        iBlue.setY((int)(MainClassApplication.heightScene/2));
-        iBlue.setVisible(false);
-        iPur.setFitWidth(18);
-        iPur.setFitHeight(18);
-        iPur.setX(126);
-        iPur.setY((int)(MainClassApplication.heightScene/2));
-        iPur.setVisible(false);
-        PaneTools.getChildren().addAll(iBlack,iWhite,iRed,iOrange,iYellow,iGreen,iBlue,iPur);
         dontClick();
 
     }
@@ -314,18 +212,21 @@ public class MainController implements Initializable {
             File FileImage = fileChooser.showOpenDialog(stage);
             Image image = new Image(FileImage.getAbsolutePath());
                 if(image.getHeight()<image.getWidth()){
-                    canvas=new Canvas(630,MainClassApplication.heightScene-54);
-                    logica.moveCanvas(canvas,40,0);
+                    canvas=new Canvas(630,MainClassApplication.heightScene-56);
+                    delta=40;
+                    logica.moveCanvas(canvas,delta,0);
                     graphicsContext=canvas.getGraphicsContext2D();
-                    graphicsContext.drawImage(image,0,0,630,MainClassApplication.heightScene-54);
+                    graphicsContext.drawImage(image,0,0,630,MainClassApplication.heightScene-56);
                 }
                 else {
-                    canvas=new Canvas(330,MainClassApplication.heightScene-54);
-                    logica.moveCanvas(canvas,180,0);
+                    canvas=new Canvas(330,MainClassApplication.heightScene-56);
+                    delta=180;
+                    logica.moveCanvas(canvas,delta,0);
                     graphicsContext=canvas.getGraphicsContext2D();
-                    graphicsContext.drawImage(image,0,0,330,MainClassApplication.heightScene-54);
+                    graphicsContext.drawImage(image,0,0,330,MainClassApplication.heightScene-56);
                 }
                 AncPane.getChildren().add(canvas);
+                buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
                 setValueSlider();
                 okClick();
         }
@@ -334,26 +235,20 @@ public class MainController implements Initializable {
 
     }
 
-
-
     public void SafeFoto(ActionEvent actionEvent) {
         try {
             WritableImage image=logica.getWritableImageFromCanvas(canvas);
-            fileChooser.setInitialFileName("newImage.jpg");
-            File safeFile = fileChooser.showSaveDialog(stage);
-           //ImageIO.write(SwingFXUtils.fromFXImage(image, null), "jpg", safeFile);
-
-
-
-
-
+            fileChooser.setInitialFileName("newImage");
+            File file = fileChooser.showSaveDialog(stage);
+            File safeFile=new File(file.getAbsolutePath()+".png");
+            safeFile.createNewFile();
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", safeFile);
 
         }
         catch (Exception e){
 
         }
     }
-
 
     public void setFiltrs(ActionEvent actionEvent) {
         clean();
@@ -425,7 +320,14 @@ public class MainController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 int i=ListMask.getSelectionModel().getSelectedIndex();
-                MaskImage.setImage(mask[i]);
+
+                MaskImage.setImage(imask.getMask(i));
+                try {
+                    AncPane.getChildren().add(MaskImage);
+                } catch (Exception e){
+                    System.out.println("Возникла ошибка, но ничего страшного");
+                }
+
             }
         });
         iMinus.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -454,12 +356,10 @@ public class MainController implements Initializable {
                 if(countM%2==0) {
                     MaskImage.setLayoutX(mouseEvent.getX());
                     MaskImage.setLayoutY(mouseEvent.getY());
-
-
                     countM++;
                 }
                 else {
-                    graphicsContext.drawImage(MaskImage.getImage(),MaskImage.getX(),MaskImage.getY(),MaskImage.getFitWidth(),MaskImage.getFitHeight());
+                    graphicsContext.drawImage(MaskImage.getImage(), MaskImage.getLayoutX()-delta, MaskImage.getLayoutY(), MaskImage.getFitWidth(), MaskImage.getFitHeight());
                     AncPane.getChildren().remove(MaskImage);
                     countM++;
                 }
@@ -468,17 +368,16 @@ public class MainController implements Initializable {
         pane.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                    if (countM % 2 == 1 &&
+                            mouseEvent.getY() < MainClassApplication.heightScene - MaskImage.getFitHeight() - 56 &&
+                            mouseEvent.getX() < delta + canvas.getWidth() - MaskImage.getFitWidth() &&
+                            mouseEvent.getX() > delta) {
+                        MaskImage.setLayoutY(mouseEvent.getY());
+                        MaskImage.setLayoutX(mouseEvent.getX());
+                    }
 
-                if(countM%2==1&&
-                        mouseEvent.getY()<MainClassApplication.heightScene-MaskImage.getFitHeight()-54&&
-                        mouseEvent.getX()<canvas.getLayoutX()+canvas.getWidth()-MaskImage.getFitWidth()&&
-                        mouseEvent.getX()>canvas.getLayoutX()){
-                    MaskImage.setLayoutY(mouseEvent.getY());
-                    MaskImage.setLayoutX(mouseEvent.getX());
-                }
             }
         });
-        AncPane.getChildren().add(MaskImage);
     }
 
     public void DrowAction(ActionEvent actionEvent) {
@@ -548,15 +447,17 @@ public class MainController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(countM%2==1&&colorCho!=null) {
-                    if (mouseEvent.getY() < MainClassApplication.heightScene - 55&&
-                            mouseEvent.getX()<canvas.getWidth()) {
-                        try {
-                            logica.drow(writer,(int) mouseEvent.getX()-22,(int) mouseEvent.getY(), (int) size.getValue(),colorCho);
-                        }
-                        catch (Exception e){
+                    try {
+                            if (mouseEvent.getY() < MainClassApplication.heightScene - 56 &&
+                                    mouseEvent.getX() < canvas.getWidth() + delta &&
+                                    mouseEvent.getX() > delta) {
+                                logica.drow(writer, (int) mouseEvent.getX() - delta, (int) mouseEvent.getY(), (int) size.getValue(), colorCho);
+                                graphicsContext.drawImage(writableImage, 0, 0, canvas.getWidth(), canvas.getHeight());
 
-                        }
-                        graphicsContext.drawImage(writableImage,0,0,canvas.getWidth(),canvas.getHeight());
+                            }
+
+                    }catch (Exception e){
+                        System.out.println("Произошла ошибка, но ничего страшного, ТЯУ ТЯУ ТЯУ");
                     }
                 }
             }
@@ -584,7 +485,12 @@ public class MainController implements Initializable {
         rect.setStrokeLineCap(StrokeLineCap.ROUND);
         rect.setFill(Color.LIGHTBLUE.deriveColor(0, 1.2, 1, 0.6));
         AnchorPane pane=AncPane;
-        pane.setLayoutX(canvas.getLayoutX());
+        if(canvas.getWidth()>canvas.getHeight()) {
+            pane.setLayoutX(canvas.getLayoutX()+40);
+        }
+        else {
+            pane.setLayoutX(canvas.getLayoutX()+180);
+        }
         pane.setLayoutY(canvas.getLayoutY());
         pane.setPrefWidth(canvas.getWidth());
         pane.setPrefHeight(canvas.getHeight());
@@ -602,12 +508,12 @@ public class MainController implements Initializable {
                     int width=(int)(rect.getWidth());
                     int height=(int) (rect.getHeight());
                     PixelReader reader=image.getPixelReader();
-                    WritableImage wImage= new WritableImage(reader, (int) rect.getX(), (int) rect.getY(), (int) width , (int) height);
-
-
+                    WritableImage wImage = new WritableImage(reader, (int) rect.getX()-delta, (int) rect.getY(), width, height);
                     AncPane.getChildren().remove(rect);
+                    buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
+                    graphicsContext.drawImage(wImage,0,0,canvas.getWidth(), canvas.getHeight());
 
-                    graphicsContext.drawImage(wImage,0,0, canvas.getWidth(), canvas.getHeight());
+
                     countM++;
                 }
             }
@@ -616,13 +522,22 @@ public class MainController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(countM%2==1){
-                    rect.setHeight(mouseEvent.getY()-rect.getY());
-                    rect.setWidth(mouseEvent.getX()-rect.getX());
+                    if(mouseEvent.getY()-rect.getY()>0&&mouseEvent.getX()-rect.getX()>0) {
+                        rect.setHeight(mouseEvent.getY() - rect.getY());
+                        rect.setWidth(mouseEvent.getX() - rect.getX());
+                    }
                 }
             }
         });
 
     }
 
+    public void returnLastFoto(ActionEvent actionEvent) {
+            WritableImage image = buffer.ReturnImeginn();
+            graphicsContext.drawImage(image,0,0,canvas.getWidth(), canvas.getHeight());
+            if(!buffer.isNullImageStack()) {
+                ReturneFoto.setVisible(false);
+            }
+    }
 
 }
