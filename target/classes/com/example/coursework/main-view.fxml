@@ -78,7 +78,7 @@
                 <cursor>
                     <Cursor fx:constant="HAND" />
                 </cursor></Button>
-            <MenuButton fx:id="DrowBut" mnemonicParsing="false" popupSide="TOP" styleClass="FunBut" text="М/Т/Р">
+            <MenuButton fx:id="DrowBut" mnemonicParsing="false" popupSide="TOP" styleClass="FunBut" text="М/Р">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#setMaskOnFoto" text="Маски" />
                   <MenuItem mnemonicParsing="false" onAction="#DrowAction" text="Рисование" />
