@@ -11,8 +11,12 @@ module com.example.coursework {
     requires eu.hansolo.tilesfx;
     requires java.desktop;
     requires javafx.swing;
+    requires junit;
 
     opens com.example.coursework to javafx.fxml;
     exports com.example.coursework;
+    exports com.example.MMask;
+    exports com.example.ibuff;
+    exports com.example.ifiltrs;
 
 }
