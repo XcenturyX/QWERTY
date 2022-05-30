@@ -11,9 +11,18 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Класс, который запускает приложение.
+ */
 public class MainClassApplication extends Application {
     final static double widthScene = 1024;
     final static double heightScene = 494;
+
+    /**
+     * Точка входа для JavaFX приложения.
+     * @param stage - главный контейнер.
+     * @throws IOException - возможно IOException.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainClassApplication.class.getResource("main-view.fxml"));
@@ -28,6 +37,9 @@ public class MainClassApplication extends Application {
         stage.show();
     }
 
+    /**
+     * Запуск приложения.
+     */
     public static void main(String[] args) {
         launch();
     }

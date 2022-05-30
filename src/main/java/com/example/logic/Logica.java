@@ -9,17 +9,39 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 
-
+/**
+ * Класс логики, в который вынесены функции обработки изображения
+ */
 public class Logica {
+    /**
+     * Функция, которая устанавливает координаты у холста
+     * @param canvas - холст
+     * @param x - координата Х
+     * @param y - координата У
+     */
     public void moveCanvas(Canvas canvas, int x, int y) {
         canvas.setTranslateX(x);
         canvas.setTranslateY(y);
     }
+
+    /**
+     * Функция, которая возвращает изображение с холста
+     * @param canvas - холст
+     * @return - картинка
+     */
     public WritableImage getWritableImageFromCanvas(Canvas canvas){
         WritableImage writableImage=new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
         SnapshotParameters spa = new SnapshotParameters();
         return canvas.snapshot(spa, writableImage);
     }
+
+    /**
+     * Функция, которая изменяет значение rgb у каждого пикселя изображения
+     * @param color - алгоритм изменения rgb
+     * @param image - входное изображение
+     * @param temp - величина, на которую будет увеличиваться значение rgb
+     * @return - измененное изображение
+     */
     public WritableImage customColor(String color, WritableImage image,double temp){
         int width=(int)(image.getWidth());
         int height=(int) (image.getHeight());
@@ -93,6 +115,15 @@ public class Logica {
         return image;
 
     }
+
+    /**
+     * Функция, которая заполняет указанную область цветом
+     * @param pixelWriter - объект PixelWriter
+     * @param x - координата Х области
+     * @param y - координата У области
+     * @param c - размер области
+     * @param color - цвет области
+     */
     public void drow(PixelWriter pixelWriter, int x, int y, int c,Color color){
         for(int i=0;i<c;i++){
             for(int j=0;j<c;j++){
@@ -102,18 +133,5 @@ public class Logica {
             }
         }
     }
-   /* public WritableImage skaleFoto(WritableImage image,int deltaX,int deltaY,int deltaW,int deltaH){
-        WritableImage i=image;
-        int wight=(int)image.getWidth();
-        int hight=(int)image.getHeight();
-        PixelWriter writer= i.getPixelWriter();
-        for(int y=0;y<hight;y++){
-            for(int x=0;x<wight;x++){
-                if(x<deltaX&&x>deltaX+deltaW&&y<deltaY&&y>deltaY+deltaH) {
-                    writer.setColor(x, y, new Color(0, 0, 0, 0));
-                }
-            }
-        }
-        return i;
-    }*/
+
 }

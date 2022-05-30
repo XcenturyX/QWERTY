@@ -33,13 +33,17 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javax.imageio.ImageIO;
 
 
-
+/**
+ * Класс контроллер, в котором реализованы некоторые функции обработки изображения.
+ */
 public class MainController implements Initializable {
     private FileChooser fileChooser;
     private Stage stage;
@@ -69,13 +73,14 @@ public class MainController implements Initializable {
     @FXML
     private ImageView iPlus, iMinus,iBlack,iBlue,iGreen,iOrange,iRed,iWhite,iPur,iYellow;
     @FXML
-    private Button FilterBut,CorBut,ScaleBut,SafeBut,ReturneFoto;
+    private Button FilterBut,CorBut,ScaleBut,SafeBut,returneScale,returneDrow,returneLast,apply,returneCust;
     @FXML
     private MenuButton DrowBut;
 
 
-
-
+    /**
+     * Функция первичной инциализации.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fileChooser=new FileChooser();
@@ -85,8 +90,8 @@ public class MainController implements Initializable {
         buffer=new Buffer();
         imask=new Mask();
 
-        ListFilters.getItems().addAll(filter.arrFiltrs);
-
+        ListFilters.getItems().addAll(filter.getArrFiltrs());
+        try {
         InputStream Stream=getClass().getResourceAsStream("useFoto/MTool/minus.png");
         iMinus.setImage(new Image(Stream));
         Stream=getClass().getResourceAsStream("useFoto/MTool/plus.png");
@@ -107,6 +112,10 @@ public class MainController implements Initializable {
         iWhite.setImage(new Image(Stream));
         Stream=getClass().getResourceAsStream("useFoto/MColors/Yellow.png");
         iYellow.setImage(new Image(Stream));
+        Stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ObservableList<String> items = FXCollections.observableArrayList (
                 "Веселый", "Нетральный", "????", "Хехехе)))");
@@ -140,14 +149,21 @@ public class MainController implements Initializable {
         dontClick();
 
     }
+
+    /**
+     * Функция, которая делает основные кнопки невидимыми.
+     */
     public void dontClick(){
         FilterBut.setVisible(false);
         CorBut.setVisible(false);
         ScaleBut.setVisible(false);
         DrowBut.setVisible(false);
         SafeBut.setVisible(false);
-        ReturneFoto.setVisible(false);
     }
+
+    /**
+     * Функция, которая делает основные кнопки видимыми.
+     */
     public void okClick(){
         FilterBut.setVisible(true);
         CorBut.setVisible(true);
@@ -155,13 +171,28 @@ public class MainController implements Initializable {
         DrowBut.setVisible(true);
         SafeBut.setVisible(true);
     }
+
+    /**
+     * Функция, которая убирает все виджеты с экрана.
+     */
     public void clean(){
+        returneDrow.setVisible(false);
+        returneScale.setVisible(false);
+        returneLast.setVisible(false);
+        returneCust.setVisible(false);
+        apply.setVisible(false);
         ListFilters.setVisible(false);
         FotoToolBar.setVisible(false);
         size.setVisible(false);
+        setValueSlider();
         offListMask();
         offChooceColor();
+        buffer.clean();
     }
+
+    /**
+     * Функция, которая устанавливает значения Slider в 0.
+     */
     public void setValueSlider(){
         SliderWarm.setValue(0);
         SliderSaturation.setValue(0);
@@ -170,6 +201,10 @@ public class MainController implements Initializable {
         SliderRed.setValue(0);
         SliderBlue.setValue(0);
     }
+
+    /**
+     * Функция, которая делает видимым виджеты для работы с масками.
+     */
     public void setListMask(){
         ListMask.setVisible(true);
         iMinus.setVisible(true);
@@ -177,12 +212,20 @@ public class MainController implements Initializable {
 
 
     }
+
+    /**
+     * Функция, которая делает невидимым виджеты для работы с масками.
+     */
     public void offListMask(){
         ListMask.setVisible(false);
         iMinus.setVisible(false);
         iPlus.setVisible(false);
 
     }
+
+    /**
+     * Функция, которая делает видимым виджет для выбора цвета.
+     */
     public void setChooserColor(){
         iBlack.setVisible(true);
         iWhite.setVisible(true);
@@ -193,6 +236,10 @@ public class MainController implements Initializable {
         iBlue.setVisible(true);
         iPur.setVisible(true);
     }
+
+    /**
+     * Функция, которая делает невидимым виджет для выбора цвета.
+     */
     public void offChooceColor(){
         iBlack.setVisible(false);
         iWhite.setVisible(false);
@@ -204,8 +251,12 @@ public class MainController implements Initializable {
         iPur.setVisible(false);
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Загрузить".
+     * Загружает выбранное пользователем изображение в рабочую область.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void LoudFoto(ActionEvent actionEvent) {
-        clean();
         if(canvas!=null) {
             AncPane.getChildren().remove(canvas);
         }
@@ -229,7 +280,7 @@ public class MainController implements Initializable {
                 }
                 AncPane.getChildren().add(canvas);
                 buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
-                setValueSlider();
+                clean();
                 okClick();
         }
         catch (Exception e){
@@ -237,6 +288,11 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Сохранить".
+     * Сохраняет изображение.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void SafeFoto(ActionEvent actionEvent) {
         try {
             WritableImage image=logica.getWritableImageFromCanvas(canvas);
@@ -252,8 +308,14 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Фильтры".
+     * Функция, для установки фильтра на изображение.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void setFiltrs(ActionEvent actionEvent) {
         clean();
+        buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
         ListFilters.setVisible(true);
         ListFilters.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -261,59 +323,107 @@ public class MainController implements Initializable {
                 graphicsContext.drawImage(filter.setFiltrs(ListFilters.getSelectionModel().getSelectedItem(),
                         new WritableImage(buffer.ReturnNotDelet().getPixelReader(),(int)buffer.ReturnNotDelet().getWidth(),(int)buffer.ReturnNotDelet().getHeight()))
                         ,0,0, canvas.getWidth(), canvas.getHeight());
+                        apply.setVisible(true);
 
             }
         });
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Коррекция".
+     * Делает видимыми виджеты коррекции на экран.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void parametersOn(ActionEvent actionEvent) {
         clean();
+        buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
         FotoToolBar.setVisible(true);
 
     }
 
+    /**
+     * Функция обработчик нажатия на SliderRed.
+     * Изменяет параметр rgb Red изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomRed(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Red",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight()),
                 SliderRed.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на SliderBlue.
+     * Изменяет параметр rgb Blue изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomBlue(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Blue",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
                 ,SliderBlue.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на SliderGreen.
+     * Изменяет параметр rgb Green изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomGreen(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Green",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
                 ,SliderGreen.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на SliderLight.
+     * Изменяет яркость изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomLight(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Light",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
                 ,SliderLight.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на SliderSaturation.
+     * Изменяет насыщенность изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomSaturation(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Sut",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
                 ,SliderSaturation.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на SliderWarm.
+     * Изменяет теплоту изображения.
+     * @param mouseEvent - действие нажатие на кнопку.
+     */
     public void CustomWarm(MouseEvent mouseEvent) {
         WritableImage image=logica.customColor("Warm",
                 new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) buffer.ReturnNotDelet().getWidth(), (int) buffer.ReturnNotDelet().getHeight())
                 ,SliderWarm.getValue());
         graphicsContext.drawImage(image,0,0,canvas.getWidth(),canvas.getHeight());
+        apply.setVisible(true);
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Маски".
+     * Содержит алгоритм для установки маски на изображение.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void setMaskOnFoto(ActionEvent actionEvent) {
         clean();
         setListMask();
@@ -368,10 +478,10 @@ public class MainController implements Initializable {
                     countM++;
                 }
                 else {
-                    buffer.PutImeginn(new WritableImage(logica.getWritableImageFromCanvas(canvas).getPixelReader(), (int) canvas.getWidth(), (int) canvas.getHeight()));
+                    buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
                     graphicsContext.drawImage(MaskImage.getImage(), MaskImage.getLayoutX()-delta, MaskImage.getLayoutY(), MaskImage.getFitWidth(), MaskImage.getFitHeight());
+                    returneLast.setVisible(true);
                     AncPane.getChildren().remove(MaskImage);
-                    ReturneFoto.setVisible(true);
                     countM++;
                 }
             }
@@ -391,6 +501,11 @@ public class MainController implements Initializable {
         });
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Рисование".
+     * Содержит алгоритм для рисование на изображении.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void DrowAction(ActionEvent actionEvent) {
         clean();
         setChooserColor();
@@ -452,7 +567,7 @@ public class MainController implements Initializable {
             }
         });
         writablImage=logica.getWritableImageFromCanvas(canvas);
-        buffer.PutImeginn(new WritableImage(logica.getWritableImageFromCanvas (canvas).getPixelReader(),(int) canvas.getWidth(), (int) canvas.getHeight()));
+        buffer.PutImeginn(writablImage);
         writr=writablImage.getPixelWriter();
         pn.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
@@ -464,17 +579,7 @@ public class MainController implements Initializable {
                                     mouseEvent.getX() > delta) {
                                 logica.drow(writr, (int) mouseEvent.getX() - delta, (int) mouseEvent.getY(), (int) size.getValue(), colorCho);
                                 graphicsContext.drawImage(writablImage, 0, 0, canvas.getWidth(), canvas.getHeight());
-                                ReturneFoto.setVisible(true);
-                                ReturneFoto.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent mouseEvent) {
-                                        writablImage=null;
-                                        writablImage=new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) canvas.getWidth(), (int) canvas.getHeight());
-                                        buffer.PutImeginn(new WritableImage(writablImage.getPixelReader(),(int) canvas.getWidth(), (int) canvas.getHeight()));
-                                        writr=writablImage.getPixelWriter();
-                                    }
-                                });
-
+                                returneDrow.setVisible(true);
                             }
 
                     }catch (Exception e){
@@ -497,6 +602,11 @@ public class MainController implements Initializable {
         });
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Обрезать".
+     * Содержит алгоритм для обрезания изображения.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
     public void SkaleFoto(ActionEvent actionEvent) {
         clean();
         countM=0;
@@ -532,9 +642,24 @@ public class MainController implements Initializable {
                     WritableImage wImage = new WritableImage(reader, (int) rect.getX()-delta, (int) rect.getY(), width, height);
                     AncPane.getChildren().remove(rect);
                     buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
+                    if(wImage.getWidth()<wImage.getHeight()&&delta==40){
+                        AncPane.getChildren().remove(canvas);
+                        canvas=new Canvas(330,MainClassApplication.heightScene-56);
+                        delta=180;
+                        logica.moveCanvas(canvas,delta,0);
+                        graphicsContext=canvas.getGraphicsContext2D();
+                        AncPane.getChildren().add(canvas);
+                    }
+                    if(wImage.getWidth()>wImage.getHeight()&&delta==180){
+                        AncPane.getChildren().remove(canvas);
+                        canvas=new Canvas(630,MainClassApplication.heightScene-56);
+                        delta=40;
+                        logica.moveCanvas(canvas,delta,0);
+                        graphicsContext=canvas.getGraphicsContext2D();
+                        AncPane.getChildren().add(canvas);
+                    }
                     graphicsContext.drawImage(wImage,0,0,canvas.getWidth(), canvas.getHeight());
-
-
+                    returneScale.setVisible(true);
                     countM++;
                 }
             }
@@ -553,12 +678,83 @@ public class MainController implements Initializable {
 
     }
 
-    public void returnLastFoto(ActionEvent actionEvent) {
-            WritableImage image = buffer.ReturnImeginn();
-            graphicsContext.drawImage(image,0,0,canvas.getWidth(), canvas.getHeight());
-            if(!buffer.isNullImageStack()) {
-                ReturneFoto.setVisible(false);
-            }
+    /**
+     * Функция обработчик нажатия на кнопку "Отмена".
+     * Устанавливает на холст последнюю картинку из буффера.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
+    public void ReturnScale(ActionEvent actionEvent) {
+        if(canvas.getWidth()>canvas.getHeight()&&buffer.ReturnNotDelet().getWidth()<buffer.ReturnNotDelet().getHeight()){
+            AncPane.getChildren().remove(canvas);
+            canvas=new Canvas(330,MainClassApplication.heightScene-56);
+            delta=180;
+            logica.moveCanvas(canvas,delta,0);
+            graphicsContext=canvas.getGraphicsContext2D();
+            AncPane.getChildren().add(canvas);
+        }
+        if(canvas.getWidth()<canvas.getHeight()&&buffer.ReturnNotDelet().getWidth()>buffer.ReturnNotDelet().getHeight()){
+            AncPane.getChildren().remove(canvas);
+            canvas=new Canvas(630,MainClassApplication.heightScene-56);
+            delta=40;
+            logica.moveCanvas(canvas,delta,0);
+            graphicsContext=canvas.getGraphicsContext2D();
+            AncPane.getChildren().add(canvas);
+        }
+        graphicsContext.drawImage(buffer.ReturnImeginn(),0,0, canvas.getWidth(), canvas.getHeight());
+        if(buffer.isNullImageStack()){
+            returneScale.setVisible(false);
+        }
     }
 
+    /**
+     * Функция обработчик нажатия на кнопку "Отмена".
+     * Устанавливает на холст последнюю картинку из буффера.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
+    public void ReturnDrow(ActionEvent actionEvent) {
+        writablImage=new WritableImage(buffer.ReturnNotDelet().getPixelReader(), (int) canvas.getWidth(), (int) canvas.getHeight());
+        buffer.PutImeginn(writablImage);
+        writr=writablImage.getPixelWriter();
+        graphicsContext.drawImage(buffer.ReturnImeginn(),0,0, canvas.getWidth(), canvas.getHeight());
+        if (buffer.isNullImageStack()){
+            returneScale.setVisible(false);
+        }
+    }
+
+    /**
+     * Функция обработчик нажатия на кнопку "Отмена".
+     * Устанавливает на холст последнюю картинку из буффера.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
+    public void ReturnLast(ActionEvent actionEvent) {
+        graphicsContext.drawImage(buffer.ReturnImeginn(),0,0, canvas.getWidth(), canvas.getHeight());
+        if (buffer.isNullImageStack()){
+            returneLast.setVisible(false);
+        }
+    }
+
+    /**
+     * Функция обработчик нажатия на кнопку "Set".
+     * Помещает в буффер изображение с холста.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
+    public void Apply(ActionEvent actionEvent) {
+        buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
+        apply.setVisible(false);
+        returneCust.setVisible(true);
+    }
+
+    /**
+     * Функция обработчик нажатия на кнопку "Отмена".
+     * Устанавливает на холст последнюю картинку из буффера.
+     * @param actionEvent - действие нажатие на кнопку.
+     */
+    public void ReturnCust(ActionEvent actionEvent) {
+        buffer.delete();
+        graphicsContext.drawImage(buffer.ReturnNotDelet(),0,0, canvas.getWidth(), canvas.getHeight());
+        if (buffer.getSize()==1){
+            returneCust.setVisible(false);
+        }
+
+    }
 }
