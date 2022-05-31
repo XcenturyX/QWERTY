@@ -1,0 +1,7 @@
+
+p	java:S116"VRename this field "BufferImige" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ÿ“ÚÑüÿÿÿÿ
+k
+java:S1149"PReplace the synchronized class "Stack" by an unsynchronized one such as "Deque".(Ÿ“ÚÑüÿÿÿÿ
+h	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ì“ºÀýÿÿÿÿ
+h	java:S100 "NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ø“Ì•øÿÿÿÿ
+c	java:S100&"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ú§‡ì

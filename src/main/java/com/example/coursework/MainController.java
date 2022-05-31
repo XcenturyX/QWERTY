@@ -299,9 +299,12 @@ public class MainController implements Initializable {
             fileChooser.setInitialFileName("newImage");
             File file = fileChooser.showSaveDialog(stage);
             File safeFile=new File(file.getAbsolutePath()+".png");
-            safeFile.createNewFile();
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", safeFile);
-
+            if(safeFile.createNewFile()) {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", safeFile);
+            }
+            else {
+                System.out.println("Не удалось создать файл");
+            }
         }
         catch (Exception e){
 
@@ -478,10 +481,13 @@ public class MainController implements Initializable {
                     countM++;
                 }
                 else {
-                    buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
-                    graphicsContext.drawImage(MaskImage.getImage(), MaskImage.getLayoutX()-delta, MaskImage.getLayoutY(), MaskImage.getFitWidth(), MaskImage.getFitHeight());
-                    returneLast.setVisible(true);
-                    AncPane.getChildren().remove(MaskImage);
+                    if(MaskImage.getImage()!=null) {
+                        buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
+                        graphicsContext.drawImage(MaskImage.getImage(), MaskImage.getLayoutX() - delta, MaskImage.getLayoutY(), MaskImage.getFitWidth(), MaskImage.getFitHeight());
+                        returneLast.setVisible(true);
+                        AncPane.getChildren().remove(MaskImage);
+                        MaskImage.setImage(null);
+                    }
                     countM++;
                 }
             }
@@ -592,12 +598,7 @@ public class MainController implements Initializable {
         pn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(countM%2==0) {
                     countM++;
-                }
-                else {
-                    countM++;
-                }
             }
         });
     }

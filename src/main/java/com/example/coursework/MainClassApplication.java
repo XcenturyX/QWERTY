@@ -2,10 +2,8 @@ package com.example.coursework;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,8 +13,8 @@ import java.io.InputStream;
  * Класс, который запускает приложение.
  */
 public class MainClassApplication extends Application {
-    final static double widthScene = 1024;
-    final static double heightScene = 494;
+    static final double widthScene = 1024;
+    static final double heightScene = 494;
 
     /**
      * Точка входа для JavaFX приложения.

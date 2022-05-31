@@ -53,22 +53,22 @@ public class Logica {
                 double red=lcolor.getRed();
                 double green=lcolor.getGreen();
                 double blue=lcolor.getBlue();
-                if(color=="Red") {
+                if(color.equals("Red")) {
                     if (red + temp < 1) red += temp;
                     else red = 1.0;
                     if (red + temp < 0) red = 0;
                 }
-                if(color=="Blue"){
+                if(color.equals("Blue")){
                     if (blue + temp < 1) blue += temp;
                     else red = 1.0;
                     if (blue + temp < 0) blue = 0;
                 }
-                if(color=="Green"){
+                if(color.equals("Green")){
                     if (green + temp < 1) green += temp;
                     else red = 1.0;
                     if (green + temp < 0) green = 0;
                 }
-                if(color=="Light"){
+                if(color.equals("Light")){
                     if(red+temp<1) red+=temp; else red=1.0;
                     if(red+temp<0) red=0;
                     if(green+temp<1) green+=temp; else green=1.0;
@@ -76,7 +76,7 @@ public class Logica {
                     if(blue+temp<1) blue+=temp; else blue=1.0;
                     if(blue+temp<0) blue=0;
                 }
-                if(color=="Sut"){
+                if(color.equals("Sut")){
                     if(red>green){
                         if(red>blue){
                             if(red+temp<1) red+=temp; else red=1.0;
@@ -98,7 +98,7 @@ public class Logica {
                         }
                     }
                 }
-                if(color=="Warm"){
+                if(color.equals("Warm")){
                     if(temp<0){
                         if(blue+temp<1) blue+=temp; else blue=1.0;
                         if(blue+temp<0) blue=0;
