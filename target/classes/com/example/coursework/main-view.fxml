@@ -55,7 +55,6 @@
             </AnchorPane>
              <AnchorPane fx:id="AncPane" layoutX="150" layoutY="0" prefHeight="439" prefWidth="874">
                <children>
-
                </children>
             </AnchorPane>
 

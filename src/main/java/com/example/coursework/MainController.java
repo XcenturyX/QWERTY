@@ -84,11 +84,16 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fileChooser=new FileChooser();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image file (*.jpg)","*.jpg"),
+                new FileChooser.ExtensionFilter("Image file (*.png)","*.png"));
         stage=new Stage();
         logica=new Logica();
         filter=new MFilter();
         buffer=new Buffer();
         imask=new Mask();
+
+
+
 
         ListFilters.getItems().addAll(filter.getArrFiltrs());
         try {
@@ -114,7 +119,7 @@ public class MainController implements Initializable {
         iYellow.setImage(new Image(Stream));
         Stream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Не удалось инциализировать выбор цвета");
         }
 
         ObservableList<String> items = FXCollections.observableArrayList (
@@ -145,6 +150,77 @@ public class MainController implements Initializable {
                 }
             }
         });
+
+        iBlack.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(0,0,0,1);
+            }
+        });
+        iBlue.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(0,0,1,1);
+            }
+        });
+        iGreen.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(0.1,1,0.1,1);
+            }
+        });
+        iOrange.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(1,0.5,0.1,1);
+            }
+        });
+        iPur.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(0.6,0,1,1);
+            }
+        });
+        iRed.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(1,0,0,1);
+            }
+        });
+        iWhite.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new javafx.scene.paint.Color(1,1,1,1);
+            }
+        });
+        iYellow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                colorCho=new Color(1,0.9,0.1,1);
+            }
+        });
+        iMinus.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(countB>-10) {
+                    MaskImage.setFitWidth(MaskImage.getFitWidth()*0.9);
+                    MaskImage.setFitHeight(MaskImage.getFitHeight()*0.9);
+                    countB--;
+                }
+            }
+        });
+        iPlus.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(countB<10) {
+                    MaskImage.setFitWidth(MaskImage.getFitWidth()*1.1);
+                    MaskImage.setFitHeight(MaskImage.getFitHeight()*1.1);
+                    countB++;
+                }
+            }
+        });
+
+
 
         dontClick();
 
@@ -188,6 +264,11 @@ public class MainController implements Initializable {
         offListMask();
         offChooceColor();
         buffer.clean();
+        AncPane.setOnMouseClicked(null);
+        AncPane.setOnMouseMoved(null);
+        if(MaskImage!=null){
+            MaskImage.setVisible(false);
+        }
     }
 
     /**
@@ -209,7 +290,6 @@ public class MainController implements Initializable {
         ListMask.setVisible(true);
         iMinus.setVisible(true);
         iPlus.setVisible(true);
-
 
     }
 
@@ -279,11 +359,11 @@ public class MainController implements Initializable {
                     graphicsContext.drawImage(image,0,0,330,MainClassApplication.heightScene-56);
                 }
                 AncPane.getChildren().add(canvas);
-                buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
                 clean();
                 okClick();
         }
         catch (Exception e){
+            System.out.println("Не удалось загрузить фотографию");
         }
 
     }
@@ -297,17 +377,11 @@ public class MainController implements Initializable {
         try {
             WritableImage image=logica.getWritableImageFromCanvas(canvas);
             fileChooser.setInitialFileName("newImage");
-            File file = fileChooser.showSaveDialog(stage);
-            File safeFile=new File(file.getAbsolutePath()+".png");
-            if(safeFile.createNewFile()) {
-                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", safeFile);
-            }
-            else {
-                System.out.println("Не удалось создать файл");
-            }
+            File safeFile = fileChooser.showSaveDialog(stage);
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", safeFile);
         }
         catch (Exception e){
-
+        System.out.println("Не удалось создать файл");
         }
     }
 
@@ -432,17 +506,15 @@ public class MainController implements Initializable {
         setListMask();
         countB=0;
         countM=0;
-        AnchorPane pane=AncPane;
         MaskImage=new ImageView();
-        MaskImage.setLayoutX(canvas.getLayoutX());
-        MaskImage.setLayoutY(canvas.getLayoutY());
+        MaskImage.setLayoutX(delta);
+        MaskImage.setLayoutY(0);
         MaskImage.setFitHeight(100);
         MaskImage.setFitWidth(100);
         ListMask.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 int i=ListMask.getSelectionModel().getSelectedIndex();
-
                 MaskImage.setImage(imask.getMask(i));
                 try {
                     AncPane.getChildren().add(MaskImage);
@@ -452,27 +524,7 @@ public class MainController implements Initializable {
 
             }
         });
-        iMinus.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(countB>-10) {
-                    MaskImage.setFitWidth(MaskImage.getFitWidth()*0.9);
-                    MaskImage.setFitHeight(MaskImage.getFitHeight()*0.9);
-                    countB--;
-                }
-            }
-        });
-        iPlus.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if(countB<10) {
-                    MaskImage.setFitWidth(MaskImage.getFitWidth()*1.1);
-                    MaskImage.setFitHeight(MaskImage.getFitHeight()*1.1);
-                    countB++;
-                }
-            }
-        });
-        pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(countM%2==0) {
@@ -492,16 +544,16 @@ public class MainController implements Initializable {
                 }
             }
         });
-        pane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                    if (countM % 2 == 1 &&
-                            mouseEvent.getY() < MainClassApplication.heightScene - MaskImage.getFitHeight() - 56 &&
-                            mouseEvent.getX() < delta + canvas.getWidth() - MaskImage.getFitWidth() &&
-                            mouseEvent.getX() > delta) {
-                        MaskImage.setLayoutY(mouseEvent.getY());
-                        MaskImage.setLayoutX(mouseEvent.getX());
-                    }
+                if (countM % 2 == 1 &&
+                        mouseEvent.getY() < MainClassApplication.heightScene - MaskImage.getFitHeight() - 56 &&
+                        mouseEvent.getX() < delta + canvas.getWidth() - MaskImage.getFitWidth() &&
+                        mouseEvent.getX() > delta) {
+                    MaskImage.setLayoutY(mouseEvent.getY());
+                    MaskImage.setLayoutX(mouseEvent.getX());
+                }
 
             }
         });
@@ -517,65 +569,10 @@ public class MainController implements Initializable {
         setChooserColor();
         size.setVisible(true);
         countM=0;
-        AnchorPane pn=AncPane;
-        pn.setLayoutX(canvas.getLayoutX());
-        pn.setLayoutY(canvas.getLayoutY());
-        pn.setPrefWidth(canvas.getWidth());
-        pn.setPrefHeight(canvas.getHeight());
-
-
-        iBlack.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(0,0,0,1);
-            }
-        });
-        iBlue.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(0,0,1,1);
-            }
-        });
-        iGreen.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(0.1,1,0.1,1);
-            }
-        });
-        iOrange.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(1,0.5,0.1,1);
-            }
-        });
-        iPur.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(0.6,0,1,1);
-            }
-        });
-        iRed.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(1,0,0,1);
-            }
-        });
-        iWhite.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new javafx.scene.paint.Color(1,1,1,1);
-            }
-        });
-        iYellow.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                colorCho=new Color(1,0.9,0.1,1);
-            }
-        });
         writablImage=logica.getWritableImageFromCanvas(canvas);
         buffer.PutImeginn(writablImage);
         writr=writablImage.getPixelWriter();
-        pn.setOnMouseMoved(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(countM%2==1&&colorCho!=null) {
@@ -589,13 +586,13 @@ public class MainController implements Initializable {
                             }
 
                     }catch (Exception e){
-                        System.out.println("Произошла ошибка, но ничего страшного, ТЯУ ТЯУ ТЯУ");
+                        System.out.println("Произошла ошибка, но это не критично");
                     }
                 }
             }
         });
 
-        pn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                     countM++;
@@ -616,63 +613,54 @@ public class MainController implements Initializable {
         rect.setStrokeWidth(1);
         rect.setStrokeLineCap(StrokeLineCap.ROUND);
         rect.setFill(Color.LIGHTBLUE.deriveColor(0, 1.2, 1, 0.6));
-        AnchorPane pane=AncPane;
-        if(canvas.getWidth()>canvas.getHeight()) {
-            pane.setLayoutX(canvas.getLayoutX()+40);
-        }
-        else {
-            pane.setLayoutX(canvas.getLayoutX()+180);
-        }
-        pane.setLayoutY(canvas.getLayoutY());
-        pane.setPrefWidth(canvas.getWidth());
-        pane.setPrefHeight(canvas.getHeight());
-        pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(countM%2==0) {
-                    AncPane.getChildren().add(rect);
-                    rect.setX(mouseEvent.getX());
-                    rect.setY(mouseEvent.getY());
-                    countM++;
-                }
-                else {
-                    WritableImage image=logica.getWritableImageFromCanvas(canvas);
-                    int width=(int)(rect.getWidth());
-                    int height=(int) (rect.getHeight());
-                    PixelReader reader=image.getPixelReader();
-                    WritableImage wImage = new WritableImage(reader, (int) rect.getX()-delta, (int) rect.getY(), width, height);
-                    AncPane.getChildren().remove(rect);
-                    buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
-                    if(wImage.getWidth()<wImage.getHeight()&&delta==40){
-                        AncPane.getChildren().remove(canvas);
-                        canvas=new Canvas(330,MainClassApplication.heightScene-56);
-                        delta=180;
-                        logica.moveCanvas(canvas,delta,0);
-                        graphicsContext=canvas.getGraphicsContext2D();
-                        AncPane.getChildren().add(canvas);
+                if(mouseEvent.getX()>delta&&mouseEvent.getX()<delta+canvas.getWidth()&&mouseEvent.getY()< canvas.getHeight()) {
+                    if (countM % 2 == 0) {
+                        AncPane.getChildren().add(rect);
+                        rect.setX(mouseEvent.getX());
+                        rect.setY(mouseEvent.getY());
+                        countM++;
+                    } else {
+                        WritableImage image = logica.getWritableImageFromCanvas(canvas);
+                        int width = (int) (rect.getWidth());
+                        int height = (int) (rect.getHeight());
+                        PixelReader reader = image.getPixelReader();
+                        WritableImage wImage = new WritableImage(reader, (int) rect.getX() - delta, (int) rect.getY(), width, height);
+                        AncPane.getChildren().remove(rect);
+                        buffer.PutImeginn(logica.getWritableImageFromCanvas(canvas));
+                        if (wImage.getWidth() < wImage.getHeight() && delta == 40) {
+                            AncPane.getChildren().remove(canvas);
+                            canvas = new Canvas(330, MainClassApplication.heightScene - 56);
+                            delta = 180;
+                            logica.moveCanvas(canvas, delta, 0);
+                            graphicsContext = canvas.getGraphicsContext2D();
+                            AncPane.getChildren().add(canvas);
+                        }
+                        if (wImage.getWidth() > wImage.getHeight() && delta == 180) {
+                            AncPane.getChildren().remove(canvas);
+                            canvas = new Canvas(630, MainClassApplication.heightScene - 56);
+                            delta = 40;
+                            logica.moveCanvas(canvas, delta, 0);
+                            graphicsContext = canvas.getGraphicsContext2D();
+                            AncPane.getChildren().add(canvas);
+                        }
+                        graphicsContext.drawImage(wImage, 0, 0, canvas.getWidth(), canvas.getHeight());
+                        returneScale.setVisible(true);
+                        countM++;
                     }
-                    if(wImage.getWidth()>wImage.getHeight()&&delta==180){
-                        AncPane.getChildren().remove(canvas);
-                        canvas=new Canvas(630,MainClassApplication.heightScene-56);
-                        delta=40;
-                        logica.moveCanvas(canvas,delta,0);
-                        graphicsContext=canvas.getGraphicsContext2D();
-                        AncPane.getChildren().add(canvas);
-                    }
-                    graphicsContext.drawImage(wImage,0,0,canvas.getWidth(), canvas.getHeight());
-                    returneScale.setVisible(true);
-                    countM++;
                 }
             }
         });
-        pane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+        AncPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(countM%2==1){
-                    if(mouseEvent.getY()-rect.getY()>0&&mouseEvent.getX()-rect.getX()>0) {
+                if(mouseEvent.getY()-rect.getY()>0&&mouseEvent.getX()-rect.getX()>0&&countM%2==1&&mouseEvent.getX()>delta&&mouseEvent.getX()<delta+canvas.getWidth()&&mouseEvent.getY()< canvas.getHeight()){
+
                         rect.setHeight(mouseEvent.getY() - rect.getY());
                         rect.setWidth(mouseEvent.getX() - rect.getX());
-                    }
+
                 }
             }
         });
